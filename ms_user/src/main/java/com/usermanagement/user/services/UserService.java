@@ -10,6 +10,10 @@ import com.usermanagement.user.model.entities.User;
 import com.usermanagement.user.repositories.RoleRepository;
 import com.usermanagement.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,11 +24,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
 
     public UserResponseCreatedDTO create(UserRequestCreateDTO requestDTO) {
+        logger.info("Iniciando cpf{}", requestDTO.cpf());
+
         checkCPFAvailable(requestDTO.cpf());
         checkEmailAvailable(requestDTO.email());
 
@@ -39,11 +47,9 @@ public class UserService {
 
     private Optional<UserRequestCreateDTO> checkRole(UserRequestCreateDTO requestDTO) {
 
-        var requestDTOTOCreate = (requestDTO.roles() == null || requestDTO.roles().isEmpty()) ?
+        return (requestDTO.roles() == null || requestDTO.roles().isEmpty()) ?
         checkWithoutRole(requestDTO) :
         checkWithRole(requestDTO);
-
-        return (requestDTOTOCreate.isPresent()) ? requestDTOTOCreate : Optional.empty();
     }
 
     private Optional<UserRequestCreateDTO> checkWithRole(UserRequestCreateDTO requestDTO) {
@@ -98,6 +104,5 @@ public class UserService {
     private void checkEmailAvailable(String email) {
         if (userRepository.findByEmail(email).isPresent()) throw new EmailAlreadyInUseException();
     }
-
 
 }
