@@ -15,6 +15,17 @@ import static com.usermanagement.user.common.RolesConstants.ROLE_USER;
 
 public class UserConstants {
 
+    public static UserRequestCreateDTO USER_COMMON_01_INVALID_REQUEST_01 = new UserRequestCreateDTO(
+    "A",
+    "S",
+    "",
+    null,
+    null,
+    null,
+    true,
+    null
+    );
+
     public static UserRequestCreateDTO USER_COMMON_01_REQUEST_01 = new UserRequestCreateDTO(
     "Manoel",
     "Sa",

@@ -10,10 +10,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record UserRequestCreateDTO(
-    @Size(min=3, message = "Fist name needs at least 3 characters")
+    @Size(min = 2, message = "Fist name needs at least 3 characters")
     String firstName,
 
-    @Size(min = 3, message = "Last Name needs at least 3 characters")
+    @Size(min = 2, message = "Last Name needs at least 3 characters")
     String lastName,
 
     @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}",
