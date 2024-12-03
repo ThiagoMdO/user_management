@@ -3,7 +3,6 @@ package com.usermanagement.user.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usermanagement.user.controllers.UserControllerImpl;
 import com.usermanagement.user.services.UserService;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import static com.usermanagement.user.common.UserConstants.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -35,7 +36,7 @@ class UserControllerImplTest {
     UserService userService;
 
     @Test
-    @DisplayName("create: validFields > ReturnsUserResponseCreatedDTO : Status_201")
+    @DisplayName("create: validFields > ReturnsUserResponseDTO : Status_201")
     void create_ValidFields_ReturnsUserResponseCreatedDTO_Status_201() throws Exception {
         when(userService.create(USER_COMMON_01_REQUEST_01)).thenReturn(USER_COMMON_01_RESPONSE_01_CREATED);
 
@@ -50,9 +51,21 @@ class UserControllerImplTest {
     void create_InvalidFields_ThrowsMethodArgumentNotValidException_Status_400() throws Exception {
 
         mockMvc.perform(post("/v1/users")
-                        .content(objectMapper.writeValueAsString(USER_COMMON_01_INVALID_REQUEST_01))
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+            .content(objectMapper.writeValueAsString(USER_COMMON_01_INVALID_REQUEST_01))
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+    }
+
+    @Test
+    @DisplayName("getUserById: ValidUserID > ReturnsUserResponseDTO : Status_200")
+    void getUserById_ValidUserID_ReturnsUserResponseDTO() throws Exception{
+
+        when(userService.getByID(USER_COMMON_01_REQUEST_01_CREATED.getId().toString()))
+        .thenReturn(USER_COMMON_01_RESPONSE_01_CREATED);
+
+        mockMvc.perform(get("/v1/users/" + USER_COMMON_01_REQUEST_01_CREATED.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(USER_COMMON_01_RESPONSE_01_CREATED)));
     }
 }
