@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCodeEnum {
     NOT_FOUND("Data not found"),
 
-    USER_NOT_FOUND("Customer not found"),
+    USER_NOT_FOUND("User not found"),
 
     EMAIL_ALREADY_IN_USE("Email already in use"),
 
@@ -16,7 +16,7 @@ public enum ErrorCodeEnum {
 
     BAD_REQUEST("Invalid data"),
 
-    NOT_ALL0WED_CHANGE_PASSWORD_FROM_OTHER_USER("not allowed to change password from other customer"),
+    NOT_ALL0WED_CHANGE_PASSWORD_FROM_OTHER_USER("not allowed to change password from other user"),
 
     SYSTEM_ERROR("Unavailable server"),
 

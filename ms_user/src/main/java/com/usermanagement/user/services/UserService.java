@@ -3,15 +3,14 @@ package com.usermanagement.user.services;
 import com.usermanagement.user.enums.UserRolesEnum;
 import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
+import com.usermanagement.user.exceptions.customException.UserNotFoundException;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
-import com.usermanagement.user.model.dto.out.UserResponseCreatedDTO;
+import com.usermanagement.user.model.dto.out.UserResponseDTO;
 import com.usermanagement.user.model.entities.Role;
 import com.usermanagement.user.model.entities.User;
 import com.usermanagement.user.repositories.RoleRepository;
 import com.usermanagement.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class UserService {
 
     private final RoleRepository roleRepository;
 
-    public UserResponseCreatedDTO create(UserRequestCreateDTO requestDTO) {
+    public UserResponseDTO create(UserRequestCreateDTO requestDTO) {
         logger.info("Iniciando cpf{}", requestDTO.cpf());
 
         checkCPFAvailable(requestDTO.cpf());
@@ -42,7 +42,18 @@ public class UserService {
 
         var userCreated = userRepository.save(createUser(userRequestCreateDTO));
 
-        return UserResponseCreatedDTO.createdDTO(userCreated);
+        logger.info("ID: {}", userCreated.getId());
+
+        return UserResponseDTO.createdDTO(userCreated);
+    }
+
+    public UserResponseDTO getByID(String id) {
+        return getUserInBD(id);
+    }
+
+    private UserResponseDTO getUserInBD(String id) {
+        var checkUserInDB = userRepository.findById(UUID.fromString(id)).orElseThrow(UserNotFoundException::new);
+        return UserResponseDTO.createdDTO(checkUserInDB);
     }
 
     private Optional<UserRequestCreateDTO> checkRole(UserRequestCreateDTO requestDTO) {

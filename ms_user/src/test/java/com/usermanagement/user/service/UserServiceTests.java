@@ -3,7 +3,7 @@ package com.usermanagement.user.service;
 import com.usermanagement.user.enums.UserRolesEnum;
 import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
-import com.usermanagement.user.model.dto.out.UserResponseCreatedDTO;
+import com.usermanagement.user.model.dto.out.UserResponseDTO;
 import com.usermanagement.user.repositories.RoleRepository;
 import com.usermanagement.user.repositories.UserRepository;
 import com.usermanagement.user.services.UserService;
@@ -47,7 +47,7 @@ class UserServiceTests {
         when(roleRepository.findByTypeRole(UserRolesEnum.COMMON_USER)).thenReturn(Optional.of(ROLE_USER));
         when(userRepository.save(USER_COMMON_01_REQUEST_01_CREATED_WITHOUT_ID)).thenReturn(USER_COMMON_01_REQUEST_01_CREATED);
 
-        UserResponseCreatedDTO result = userService.create(USER_COMMON_01_REQUEST_01);
+        UserResponseDTO result = userService.create(USER_COMMON_01_REQUEST_01);
 
         assertNotNull(result);
         assertEquals(USER_COMMON_01_RESPONSE_01_CREATED, result);
@@ -68,7 +68,7 @@ class UserServiceTests {
         when(roleRepository.findByTypeRole(UserRolesEnum.COMMON_USER)).thenReturn(Optional.of(ROLE_USER));
         when(userRepository.save(USER_COMMON_02_REQUEST_02_CREATED_WITHOUT_ID)).thenReturn(USER_COMMON_02_REQUEST_02_CREATED);
 
-        UserResponseCreatedDTO result = userService.create(USER_COMMON_02_REQUEST_02);
+        UserResponseDTO result = userService.create(USER_COMMON_02_REQUEST_02);
 
         assertNotNull(result);
         assertEquals(USER_COMMON_02_RESPONSE_02_CREATED, result);

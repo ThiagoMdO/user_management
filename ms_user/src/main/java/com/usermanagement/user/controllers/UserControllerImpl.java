@@ -2,7 +2,7 @@ package com.usermanagement.user.controllers;
 
 import com.usermanagement.user.interfaces.UserController;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
-import com.usermanagement.user.model.dto.out.UserResponseCreatedDTO;
+import com.usermanagement.user.model.dto.out.UserResponseDTO;
 import com.usermanagement.user.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,20 @@ public class UserControllerImpl implements UserController {
 
     private final UserService userService;
 
-    @PostMapping()
+    @PostMapping
     @Override
-    public ResponseEntity<UserResponseCreatedDTO> createUser(@Valid @RequestBody UserRequestCreateDTO requestDTO) {
-        UserResponseCreatedDTO createdDTO = userService.create(requestDTO);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestCreateDTO requestDTO) {
+        UserResponseDTO createdDTO = userService.create(requestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDTO);
+    }
+
+    @GetMapping({"/{id}"})
+    @Override
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
+        UserResponseDTO userResponseDTO = userService.getByID(id);
+
+        return ResponseEntity.ok(userResponseDTO);
     }
 
 }
