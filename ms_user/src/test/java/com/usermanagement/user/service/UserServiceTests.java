@@ -42,8 +42,8 @@ class UserServiceTests {
     RoleRepository roleRepository;
 
     @Test
-    @DisplayName("createUser: UserRequestValidFields_WithoutRole > ReturnsUserResponseDTO")
-    void createUser_withUserRequestValidFields_ReturnsUserResponseCreatedDTO() {
+    @DisplayName("create: UserRequestValidFields_WithoutRole > ReturnsUserResponseDTO")
+    void create_withUserRequestValidFields_ReturnsUserResponseCreatedDTO() {
         when(userRepository.findByCpf(USER_COMMON_01_REQUEST_01.cpf())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(USER_COMMON_01_REQUEST_01.email())).thenReturn(Optional.empty());
         when(roleRepository.findByTypeRole(UserRolesEnum.COMMON_USER)).thenReturn(Optional.of(ROLE_USER));
@@ -62,8 +62,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("createUser: UserRequestValidFields_WithRoleADM_AND_COMMON > ReturnsUserResponseDTO")
-    void createUser_UserRequestValidFields_WithRoleADM_WithRoleADM_AND_COMMON_ReturnsUserResponseCreateDTO() {
+    @DisplayName("create: UserRequestValidFields_WithRoleADM_AND_COMMON > ReturnsUserResponseDTO")
+    void create_UserRequestValidFields_WithRoleADM_WithRoleADM_AND_COMMON_ReturnsUserResponseCreateDTO() {
         when(userRepository.findByCpf(USER_COMMON_02_REQUEST_02.cpf())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(USER_COMMON_02_REQUEST_02.email())).thenReturn(Optional.empty());
         when(roleRepository.findByTypeRole(UserRolesEnum.ADM_USER)).thenReturn(Optional.of(ROLE_ADM));
@@ -83,8 +83,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("createUser: UserRequestWithCPFAlreadyInUse > ThrowCPFAlreadyUserException")
-    void createUser_UserRequestWithCPFAlreadyInUse_ThrowCPFAlreadyUserException() {
+    @DisplayName("create: UserRequestWithCPFAlreadyInUse > ThrowCPFAlreadyUserException")
+    void create_UserRequestWithCPFAlreadyInUse_ThrowCPFAlreadyUserException() {
         when(userRepository.findByCpf(USER_COMMON_03_REQUEST_03_CPF_ALREADY_IN_USE.cpf())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
 
         assertThrows(CPFAlreadyInUseException.class,
@@ -99,8 +99,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("createUser: UserRequestWithEmailAlreadyInUse > ThrowEmailAlreadyUserException")
-    void createUser_UserRequestWithEmailAlreadyInUse_ThrowEmailAlreadyUserException() {
+    @DisplayName("create: UserRequestWithEmailAlreadyInUse > ThrowEmailAlreadyUserException")
+    void create_UserRequestWithEmailAlreadyInUse_ThrowEmailAlreadyUserException() {
         when(userRepository.findByCpf(USER_COMMON_04_REQUEST_04_EMAIL_ALREADY_IN_USE.cpf())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(USER_COMMON_04_REQUEST_04_EMAIL_ALREADY_IN_USE.email())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
 
@@ -116,8 +116,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("getUserById: UserIDValid > ReturnsUserResponseDTO")
-    void getUserById_UserIDValid_ReturnsUserResponseDTO() {
+    @DisplayName("getByID: UserIDValid > ReturnsUserResponseDTO")
+    void getByID_UserIDValid_ReturnsUserResponseDTO() {
         when(userRepository.findById(USER_COMMON_01_REQUEST_01_CREATED.getId())).thenReturn(Optional.of(USER_COMMON_01_REQUEST_01_CREATED));
 
         UserResponseDTO result = userService.getByID(USER_COMMON_01_REQUEST_01_CREATED.getId().toString());
@@ -129,8 +129,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("getUserById: UserIDInvalid > ThrowsUserNotFoundException")
-    void getUserById_UserIDInvalid_ThrowsUserNotFoundException() {
+    @DisplayName("getByID: UserIDInvalid > ThrowsUserNotFoundException")
+    void getByID_UserIDInvalid_ThrowsUserNotFoundException() {
         String invalidUserID = "c55eb1b4-c9ac-4a46-8d7a-2f472d9d0ea6";
 
         when(userRepository.findById(UUID.fromString(invalidUserID))).thenReturn(Optional.empty());
@@ -141,8 +141,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("getUserById: UserIDOtherFormat > ThrowsIllegalArgumentException")
-    void getUserById_UserIDOtherFormat_ThrowsIllegalArgumentException() {
+    @DisplayName("getByID: UserIDOtherFormat > ThrowsIllegalArgumentException")
+    void ggetByID_UserIDOtherFormat_ThrowsIllegalArgumentException() {
         String incorrectFormatID = "123456";
 
         assertThrows(IllegalArgumentException.class, () -> userService.getByID(incorrectFormatID));
