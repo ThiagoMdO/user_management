@@ -7,7 +7,7 @@ import com.usermanagement.user.model.entities.User;
 import java.time.LocalDate;
 import java.util.List;
 
-public record UserResponseCreatedDTO(
+public record UserResponseDTO(
     String firstName,
 
     String lastName,
@@ -21,8 +21,8 @@ public record UserResponseCreatedDTO(
 
     List<Role> roles
 ) {
-    public static UserResponseCreatedDTO createdDTO(User user){
-        return new UserResponseCreatedDTO(user.getFirstName(),
+    public static UserResponseDTO createdDTO(User user){
+        return new UserResponseDTO(user.getFirstName(),
                                         user.getLastName(),
                                         user.getCpf(),
                                         user.getDate(),

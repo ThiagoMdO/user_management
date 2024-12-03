@@ -1,7 +1,7 @@
 package com.usermanagement.user.common;
 
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
-import com.usermanagement.user.model.dto.out.UserResponseCreatedDTO;
+import com.usermanagement.user.model.dto.out.UserResponseDTO;
 import com.usermanagement.user.model.entities.User;
 
 import java.time.LocalDate;
@@ -116,7 +116,7 @@ public class UserConstants {
     Arrays.asList(ROLE_ADM, ROLE_USER)
     );
 
-    public static UserResponseCreatedDTO USER_COMMON_01_RESPONSE_01_CREATED = new UserResponseCreatedDTO(
+    public static UserResponseDTO USER_COMMON_01_RESPONSE_01_CREATED = new UserResponseDTO(
     USER_COMMON_01_REQUEST_01_CREATED.getFirstName(),
     USER_COMMON_01_REQUEST_01_CREATED.getLastName(),
     USER_COMMON_01_REQUEST_01_CREATED.getCpf(),
@@ -125,7 +125,7 @@ public class UserConstants {
     USER_COMMON_01_REQUEST_01_CREATED.getRoles()
     );
 
-    public static UserResponseCreatedDTO USER_COMMON_02_RESPONSE_02_CREATED = new UserResponseCreatedDTO(
+    public static UserResponseDTO USER_COMMON_02_RESPONSE_02_CREATED = new UserResponseDTO(
     USER_COMMON_02_REQUEST_02_CREATED.getFirstName(),
     USER_COMMON_02_REQUEST_02_CREATED.getLastName(),
     USER_COMMON_02_REQUEST_02_CREATED.getCpf(),
