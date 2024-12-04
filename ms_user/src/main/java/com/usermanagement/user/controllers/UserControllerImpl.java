@@ -2,7 +2,9 @@ package com.usermanagement.user.controllers;
 
 import com.usermanagement.user.interfaces.UserController;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
+import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import com.usermanagement.user.model.dto.out.UserResponseDTO;
+import com.usermanagement.user.model.dto.out.UserUpdatedResponseDTO;
 import com.usermanagement.user.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,14 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id) {
         UserResponseDTO userResponseDTO = userService.getByID(id);
+
+        return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @PutMapping({"/{id}"})
+    @Override
+    public ResponseEntity<UserUpdatedResponseDTO> updateUser(@PathVariable("id") String sectionIdUser, @RequestBody UserRequestUpdateDTO requestUpdateDTO) {
+        UserUpdatedResponseDTO userResponseDTO = userService.update(sectionIdUser, requestUpdateDTO);
 
         return ResponseEntity.ok(userResponseDTO);
     }

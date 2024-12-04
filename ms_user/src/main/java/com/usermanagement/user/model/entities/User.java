@@ -1,6 +1,7 @@
 package com.usermanagement.user.model.entities;
 
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
+import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity(name = "user_system")
@@ -18,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 @EqualsAndHashCode
 public class User {
 
@@ -87,5 +90,26 @@ public class User {
             requestCreateDTO.active(),
             requestCreateDTO.roles()
         );
+    }
+
+    public static User update(User userInDB, Optional<UserRequestUpdateDTO> requestUpdateDTO) {
+        if (requestUpdateDTO.isPresent()) {
+            if (requestUpdateDTO.get().firstName().isPresent())
+                userInDB.setFirstName(requestUpdateDTO.get().firstName().get());
+
+            if (requestUpdateDTO.get().lastName().isPresent())
+                userInDB.setLastName(requestUpdateDTO.get().lastName().get());
+
+            if (requestUpdateDTO.get().date().isPresent())
+                userInDB.setDate(requestUpdateDTO.get().date().get());
+
+            if (requestUpdateDTO.get().email().isPresent())
+                userInDB.setEmail(requestUpdateDTO.get().email().get());
+
+            if (requestUpdateDTO.get().active().isPresent())
+                userInDB.setActive(requestUpdateDTO.get().active().get());
+        }
+
+        return userInDB;
     }
 }

@@ -41,7 +41,7 @@ public class Instantiation implements CommandLineRunner {
         List<Role> rolesUser2 = List.of(commonRole);
 
         User user1 = User.builder()
-        .id(UUID.randomUUID())
+        .id(UUID.fromString("7a1b7eb6-2d43-4a2e-9013-500cbc9d4d38"))
         .firstName("Ronaldo")
         .lastName("Da Silva")
         .cpf("123.456.788-90")
@@ -53,7 +53,7 @@ public class Instantiation implements CommandLineRunner {
         .build();
 
         User user2 = User.builder()
-        .id(UUID.randomUUID())
+        .id(UUID.fromString("255eb1b4-c9ac-4a46-8d7a-2f472d9d0ea9"))
         .firstName("Silvana")
         .lastName("Bezerra")
         .cpf("111.222.787-90")

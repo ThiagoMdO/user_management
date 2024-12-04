@@ -5,7 +5,9 @@ import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseExcepti
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.UserNotFoundException;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
+import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import com.usermanagement.user.model.dto.out.UserResponseDTO;
+import com.usermanagement.user.model.dto.out.UserUpdatedResponseDTO;
 import com.usermanagement.user.model.entities.Role;
 import com.usermanagement.user.model.entities.User;
 import com.usermanagement.user.repositories.RoleRepository;
@@ -48,12 +50,36 @@ public class UserService {
     }
 
     public UserResponseDTO getByID(String id) {
+//        List<User> userInBD = userRepository.findAll();
+//
+//        for (User user : userInBD) {
+//            logger.info("name {}, id: {}", user.getFirstName(), user.getId());
+//        }
         return getUserInBD(id);
     }
 
+    public UserUpdatedResponseDTO update(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {
+
+        var userToUpload = updateUserBuilder(sectionUserID, requestUpdateDTO);
+
+        return UserUpdatedResponseDTO.createDTO(userToUpload);
+    }
+
+    private User updateUserBuilder(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {
+        User userInBD = getOptionalUserInBD(sectionUserID);
+
+        User userToUpload = User.update(userInBD, Optional.of(requestUpdateDTO));
+
+        return userRepository.save(userToUpload);
+    }
+
     private UserResponseDTO getUserInBD(String id) {
-        var checkUserInDB = userRepository.findById(UUID.fromString(id)).orElseThrow(UserNotFoundException::new);
+        var checkUserInDB = getOptionalUserInBD(id);
         return UserResponseDTO.createdDTO(checkUserInDB);
+    }
+
+    private User getOptionalUserInBD(String id) {
+        return userRepository.findById(UUID.fromString(id)).orElseThrow(UserNotFoundException::new);
     }
 
     private Optional<UserRequestCreateDTO> checkRole(UserRequestCreateDTO requestDTO) {
