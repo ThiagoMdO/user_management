@@ -1,5 +1,7 @@
 package com.usermanagement.user.model.entities;
 
+import com.usermanagement.user.enums.UserRolesEnum;
+import com.usermanagement.user.exceptions.customException.UserCannotBeChangedException;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
 import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import jakarta.persistence.*;

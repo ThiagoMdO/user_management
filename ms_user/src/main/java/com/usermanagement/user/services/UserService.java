@@ -3,6 +3,7 @@ package com.usermanagement.user.services;
 import com.usermanagement.user.enums.UserRolesEnum;
 import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
+import com.usermanagement.user.exceptions.customException.UserCannotBeChangedException;
 import com.usermanagement.user.exceptions.customException.UserNotFoundException;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
 import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
@@ -68,9 +69,15 @@ public class UserService {
     private User updateUserBuilder(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {
         User userInBD = getOptionalUserInBD(sectionUserID);
 
+        checkUserActive(userInBD);
+
         User userToUpload = User.update(userInBD, Optional.of(requestUpdateDTO));
 
         return userRepository.save(userToUpload);
+    }
+
+    private void checkUserActive(User userInBD) {
+        if (!userInBD.isActive()) throw new UserCannotBeChangedException();
     }
 
     private UserResponseDTO getUserInBD(String id) {
