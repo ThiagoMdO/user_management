@@ -5,6 +5,7 @@ import com.usermanagement.user.exceptions.build.ErrorCodeEnum;
 import com.usermanagement.user.exceptions.build.Problem;
 import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
+import com.usermanagement.user.exceptions.customException.UserCannotBeChangedException;
 import com.usermanagement.user.exceptions.customException.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,13 @@ public class GlobalExceptionHandler {
         StandardCustomException emailAlreadyInUseException = new EmailAlreadyInUseException();
         var problem = new Problem(emailAlreadyInUseException.getMessageErrorCode(), emailAlreadyInUseException.getHttpStatus());
         return ResponseEntity.status(emailAlreadyInUseException.getHttpStatus()).body(problem);
+    }
+
+    @ExceptionHandler(UserCannotBeChangedException.class)
+    public ResponseEntity<Object> handlerUserCannotBeChangedException() {
+        StandardCustomException userCannotBeChangedException = new UserCannotBeChangedException();
+        var problem = new Problem(userCannotBeChangedException.getMessageErrorCode(), userCannotBeChangedException.getHttpStatus());
+        return ResponseEntity.status(userCannotBeChangedException.getHttpStatus()).body(problem);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

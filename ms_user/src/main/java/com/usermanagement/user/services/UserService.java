@@ -3,9 +3,12 @@ package com.usermanagement.user.services;
 import com.usermanagement.user.enums.UserRolesEnum;
 import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
+import com.usermanagement.user.exceptions.customException.UserCannotBeChangedException;
 import com.usermanagement.user.exceptions.customException.UserNotFoundException;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
+import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import com.usermanagement.user.model.dto.out.UserResponseDTO;
+import com.usermanagement.user.model.dto.out.UserUpdatedResponseDTO;
 import com.usermanagement.user.model.entities.Role;
 import com.usermanagement.user.model.entities.User;
 import com.usermanagement.user.repositories.RoleRepository;
@@ -51,9 +54,46 @@ public class UserService {
         return getUserInBD(id);
     }
 
+    public UserUpdatedResponseDTO update(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {
+
+        var userToUpload = updateUserBuilder(sectionUserID, requestUpdateDTO);
+
+        return UserUpdatedResponseDTO.createDTO(userToUpload);
+    }
+
+    private User updateUserBuilder(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {
+        User userInDB = getOptionalUserInBD(sectionUserID);
+
+        checkUserActive(userInDB);
+
+        var userToUpload = alterUserInDBByUserRequest(userInDB, requestUpdateDTO);
+
+        return userRepository.save(userToUpload);
+    }
+
+    private User alterUserInDBByUserRequest(User userInDBToAlter, UserRequestUpdateDTO requestUpdateDTO) {
+
+        requestUpdateDTO.firstName().ifPresent(userInDBToAlter::setFirstName);
+        requestUpdateDTO.lastName().ifPresent(userInDBToAlter::setLastName);
+        requestUpdateDTO.date().ifPresent(userInDBToAlter::setDate);
+        requestUpdateDTO.email().ifPresent(userInDBToAlter::setEmail);
+        requestUpdateDTO.active().ifPresent(userInDBToAlter::setActive);
+
+        return userInDBToAlter;
+    }
+
+
+    private void checkUserActive(User userInBD) {
+        if (!userInBD.isActive()) throw new UserCannotBeChangedException();
+    }
+
     private UserResponseDTO getUserInBD(String id) {
-        var checkUserInDB = userRepository.findById(UUID.fromString(id)).orElseThrow(UserNotFoundException::new);
+        var checkUserInDB = getOptionalUserInBD(id);
         return UserResponseDTO.createdDTO(checkUserInDB);
+    }
+
+    private User getOptionalUserInBD(String id) {
+        return userRepository.findById(UUID.fromString(id)).orElseThrow(UserNotFoundException::new);
     }
 
     private Optional<UserRequestCreateDTO> checkRole(UserRequestCreateDTO requestDTO) {
@@ -83,9 +123,8 @@ public class UserService {
     }
 
     private Optional<UserRequestCreateDTO> checkWithoutRole(UserRequestCreateDTO requestCreateDTO) {
-        requestCreateDTO = getUserRequestCreateDTOWithoutRole(requestCreateDTO);
 
-        return Optional.of(requestCreateDTO);
+        return Optional.of(getUserRequestCreateDTOWithoutRole(requestCreateDTO));
     }
 
     private UserRequestCreateDTO getUserRequestCreateDTOWithoutRole(UserRequestCreateDTO requestCreateDTO) {
@@ -95,17 +134,7 @@ public class UserService {
 
         byTypeRole.ifPresent(roles::add);
 
-        requestCreateDTO = new UserRequestCreateDTO(
-        requestCreateDTO.firstName(),
-        requestCreateDTO.lastName(),
-        requestCreateDTO.cpf(),
-        requestCreateDTO.date(),
-        requestCreateDTO.email(),
-        requestCreateDTO.password(),
-        requestCreateDTO.active(),
-        roles
-        );
-        return requestCreateDTO;
+        return UserRequestCreateDTO.createDTO(requestCreateDTO, roles);
     }
 
     private void checkCPFAvailable(String cpf) {

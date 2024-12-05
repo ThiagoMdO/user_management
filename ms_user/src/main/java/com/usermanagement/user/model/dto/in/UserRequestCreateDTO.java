@@ -3,21 +3,20 @@ package com.usermanagement.user.model.dto.in;
 import com.usermanagement.user.model.entities.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public record UserRequestCreateDTO(
-    @Size(min = 2, message = "Fist name needs at least 3 characters")
+    @Size(min = 2, message = "Fist name needs at least 2 characters")
     String firstName,
 
-    @Size(min = 2, message = "Last Name needs at least 3 characters")
+    @Size(min = 2, message = "Last Name needs at least 2 characters")
     String lastName,
 
-    @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}",
-    message = "CPF must be in the format 000.000.000-00")
+    @CPF
     String cpf,
 
     @NotNull(message = "The date can't be null")
@@ -33,4 +32,18 @@ public record UserRequestCreateDTO(
     Boolean active,
 
     List<Role> roles
-){}
+){
+    public static UserRequestCreateDTO createDTO(UserRequestCreateDTO requestCreateDTO, List<Role> roles) {
+
+        return new UserRequestCreateDTO(
+            requestCreateDTO.firstName(),
+            requestCreateDTO.lastName(),
+            requestCreateDTO.cpf(),
+            requestCreateDTO.date(),
+            requestCreateDTO.email(),
+            requestCreateDTO.password(),
+            requestCreateDTO.active(),
+            roles
+        );
+    }
+}

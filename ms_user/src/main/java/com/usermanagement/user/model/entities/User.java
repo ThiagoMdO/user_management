@@ -4,9 +4,9 @@ import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 @EqualsAndHashCode
 public class User {
 
@@ -32,8 +33,7 @@ public class User {
     private String lastName;
 
     @Column(unique = true)
-    @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}",
-    message = "CPF must be in the format 000.000.000-00")
+    @CPF
     private String cpf;
 
     @NotNull(message = "The date can't be null")
@@ -88,4 +88,5 @@ public class User {
             requestCreateDTO.roles()
         );
     }
+
 }

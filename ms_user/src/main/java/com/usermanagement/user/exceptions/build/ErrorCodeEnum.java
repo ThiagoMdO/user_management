@@ -16,6 +16,8 @@ public enum ErrorCodeEnum {
 
     BAD_REQUEST("Invalid data"),
 
+    THE_USER_CANNOT_BE_CHANGED("This user is deactivated, only an ADM can be activated it again"),
+
     NOT_ALL0WED_CHANGE_PASSWORD_FROM_OTHER_USER("not allowed to change password from other user"),
 
     SYSTEM_ERROR("Unavailable server"),
