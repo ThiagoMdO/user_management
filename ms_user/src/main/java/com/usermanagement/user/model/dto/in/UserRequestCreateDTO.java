@@ -32,4 +32,18 @@ public record UserRequestCreateDTO(
     Boolean active,
 
     List<Role> roles
-){}
+){
+    public static UserRequestCreateDTO createDTO(UserRequestCreateDTO requestCreateDTO, List<Role> roles) {
+
+        return new UserRequestCreateDTO(
+            requestCreateDTO.firstName(),
+            requestCreateDTO.lastName(),
+            requestCreateDTO.cpf(),
+            requestCreateDTO.date(),
+            requestCreateDTO.email(),
+            requestCreateDTO.password(),
+            requestCreateDTO.active(),
+            roles
+        );
+    }
+}

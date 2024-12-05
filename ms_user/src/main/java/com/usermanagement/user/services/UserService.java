@@ -51,11 +51,6 @@ public class UserService {
     }
 
     public UserResponseDTO getByID(String id) {
-//        List<User> userInBD = userRepository.findAll();
-//
-//        for (User user : userInBD) {
-//            logger.info("name {}, id: {}", user.getFirstName(), user.getId());
-//        }
         return getUserInBD(id);
     }
 
@@ -67,14 +62,26 @@ public class UserService {
     }
 
     private User updateUserBuilder(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {
-        User userInBD = getOptionalUserInBD(sectionUserID);
+        User userInDB = getOptionalUserInBD(sectionUserID);
 
-        checkUserActive(userInBD);
+        checkUserActive(userInDB);
 
-        User userToUpload = User.update(userInBD, Optional.of(requestUpdateDTO));
+        var userToUpload = alterUserInDBByUserRequest(userInDB, requestUpdateDTO);
 
         return userRepository.save(userToUpload);
     }
+
+    private User alterUserInDBByUserRequest(User userInDBToAlter, UserRequestUpdateDTO requestUpdateDTO) {
+
+        requestUpdateDTO.firstName().ifPresent(userInDBToAlter::setFirstName);
+        requestUpdateDTO.lastName().ifPresent(userInDBToAlter::setLastName);
+        requestUpdateDTO.date().ifPresent(userInDBToAlter::setDate);
+        requestUpdateDTO.email().ifPresent(userInDBToAlter::setEmail);
+        requestUpdateDTO.active().ifPresent(userInDBToAlter::setActive);
+
+        return userInDBToAlter;
+    }
+
 
     private void checkUserActive(User userInBD) {
         if (!userInBD.isActive()) throw new UserCannotBeChangedException();
@@ -116,9 +123,8 @@ public class UserService {
     }
 
     private Optional<UserRequestCreateDTO> checkWithoutRole(UserRequestCreateDTO requestCreateDTO) {
-        requestCreateDTO = getUserRequestCreateDTOWithoutRole(requestCreateDTO);
 
-        return Optional.of(requestCreateDTO);
+        return Optional.of(getUserRequestCreateDTOWithoutRole(requestCreateDTO));
     }
 
     private UserRequestCreateDTO getUserRequestCreateDTOWithoutRole(UserRequestCreateDTO requestCreateDTO) {
@@ -128,17 +134,7 @@ public class UserService {
 
         byTypeRole.ifPresent(roles::add);
 
-        requestCreateDTO = new UserRequestCreateDTO(
-        requestCreateDTO.firstName(),
-        requestCreateDTO.lastName(),
-        requestCreateDTO.cpf(),
-        requestCreateDTO.date(),
-        requestCreateDTO.email(),
-        requestCreateDTO.password(),
-        requestCreateDTO.active(),
-        roles
-        );
-        return requestCreateDTO;
+        return UserRequestCreateDTO.createDTO(requestCreateDTO, roles);
     }
 
     private void checkCPFAvailable(String cpf) {
