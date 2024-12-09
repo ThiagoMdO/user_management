@@ -1,14 +1,13 @@
 package com.usermanagement.user.common;
 
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
+import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import com.usermanagement.user.model.dto.out.UserResponseDTO;
+import com.usermanagement.user.model.dto.out.UserUpdatedResponseDTO;
 import com.usermanagement.user.model.entities.User;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.usermanagement.user.common.RolesConstants.ROLE_ADM;
 import static com.usermanagement.user.common.RolesConstants.ROLE_USER;
@@ -134,9 +133,6 @@ public class UserConstants {
     USER_COMMON_02_REQUEST_02_CREATED.getRoles()
     );
 
-
-
-
     public static User USER_COMMON_IN_DB_01 = new User(
     UUID.randomUUID(),
     "Mira",
@@ -148,5 +144,65 @@ public class UserConstants {
     true,
     List.of(ROLE_USER)
     );
+
+    public static User USER_DISABLE_COMMON_IN_DB_01 = new User(
+    UUID.randomUUID(),
+    "Solange",
+    "Souza",
+    "111.222.123-00",
+    LocalDate.of(1999, 1, 22),
+    "sol@email.com",
+    "12345678",
+    false,
+    List.of(ROLE_USER)
+    );
+
+    public static UserRequestUpdateDTO USER_COMMON_REQUEST_TO_UPDATE = new UserRequestUpdateDTO(
+    Optional.of("Paula"),
+    Optional.empty(),
+    Optional.of(LocalDate.parse("1993-09-22")),
+    Optional.of("f1s@email.com"),
+    Optional.of(true)
+    );
+
+    public static UserRequestUpdateDTO USER_COMMON_REQUEST_WITH_SOME_FIELDS_VOID_TO_UPDATE = new UserRequestUpdateDTO(
+    Optional.empty(),
+    Optional.empty(),
+    Optional.empty(),
+    Optional.of("test@email.com"),
+    Optional.of(true)
+    );
+
+    public static User USER_COMMON_UPLOADED_IN_DB = User.builder()
+    .id(USER_COMMON_IN_DB_01.getId())
+    .firstName(USER_COMMON_REQUEST_TO_UPDATE.firstName().get())
+    .lastName(USER_COMMON_IN_DB_01.getLastName())
+    .cpf(USER_COMMON_IN_DB_01.getCpf())
+    .date(USER_COMMON_REQUEST_TO_UPDATE.date().get())
+    .email(USER_COMMON_REQUEST_TO_UPDATE.email().get())
+    .password(USER_COMMON_IN_DB_01.getPassword())
+    .active(USER_COMMON_REQUEST_TO_UPDATE.active().get())
+    .roles(USER_COMMON_IN_DB_01.getRoles())
+    .build();
+
+    public static User USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID = User.builder()
+    .id(USER_COMMON_IN_DB_01.getId())
+    .firstName(USER_COMMON_IN_DB_01.getFirstName())
+    .lastName(USER_COMMON_IN_DB_01.getLastName())
+    .cpf(USER_COMMON_IN_DB_01.getCpf())
+    .date(USER_COMMON_IN_DB_01.getDate())
+    .email(USER_COMMON_REQUEST_WITH_SOME_FIELDS_VOID_TO_UPDATE.email().get())
+    .password(USER_COMMON_IN_DB_01.getPassword())
+    .active(USER_COMMON_REQUEST_WITH_SOME_FIELDS_VOID_TO_UPDATE.active().get())
+    .roles(USER_COMMON_IN_DB_01.getRoles())
+    .build();
+
+
+    public static UserUpdatedResponseDTO USER_COMMON_RESPONSE_UPDATED =
+    UserUpdatedResponseDTO.createDTO(USER_COMMON_UPLOADED_IN_DB);
+
+    public static UserUpdatedResponseDTO USER_COMMON_RESPONSE_UPDATED_WITH_SOME_FIELDS_VOID =
+    UserUpdatedResponseDTO.createDTO(USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID);
+
 
 }

@@ -13,6 +13,7 @@ import com.usermanagement.user.model.entities.Role;
 import com.usermanagement.user.model.entities.User;
 import com.usermanagement.user.repositories.RoleRepository;
 import com.usermanagement.user.repositories.UserRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
