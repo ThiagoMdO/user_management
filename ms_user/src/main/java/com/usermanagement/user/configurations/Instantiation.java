@@ -64,7 +64,7 @@ public class Instantiation implements CommandLineRunner {
         .roles(rolesUser2)
         .build();
 
-        userRepository.save(user1);
-        userRepository.save(user2);
+//        userRepository.save(user1);
+//        userRepository.save(user2);
     }
 }
