@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 public class UserNotFoundException extends StandardCustomException {
 
     public UserNotFoundException() {
-        super(ErrorCodeEnum.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+        super(ErrorCodeEnum.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 }
