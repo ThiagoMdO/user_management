@@ -5,6 +5,7 @@ import com.usermanagement.user.exceptions.customException.CPFAlreadyInUseExcepti
 import com.usermanagement.user.exceptions.customException.EmailAlreadyInUseException;
 import com.usermanagement.user.exceptions.customException.UserCannotBeChangedException;
 import com.usermanagement.user.exceptions.customException.UserNotFoundException;
+import com.usermanagement.user.model.dto.in.UserRequestAlterationPassword;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
 import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import com.usermanagement.user.model.dto.out.UserResponseDTO;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,16 @@ public class UserService {
         var userToUpload = updateUserBuilder(sectionUserID, requestUpdateDTO);
 
         return UserUpdatedResponseDTO.createDTO(userToUpload);
+    }
+
+    public void alterPasswordFromUserByID(String sectionIDUser, UserRequestAlterationPassword requestAlterationPassword) {
+        alterPasswordUserInDB(sectionIDUser, requestAlterationPassword);
+    }
+
+    private void alterPasswordUserInDB(String sectionIDUser, UserRequestAlterationPassword requestAlterationPassword) {
+        var userToAlterPassword = getOptionalUserInBD(sectionIDUser);
+        userToAlterPassword.setPassword(requestAlterationPassword.password());
+        userRepository.save(userToAlterPassword);
     }
 
     private User updateUserBuilder(String sectionUserID, UserRequestUpdateDTO requestUpdateDTO) {

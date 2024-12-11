@@ -28,7 +28,7 @@ public class UserConstants {
     public static UserRequestCreateDTO USER_COMMON_01_REQUEST_01 = new UserRequestCreateDTO(
     "Manoel",
     "Sa",
-    "111.222.444-99",
+    "995.160.590-74",
     LocalDate.of(1990, 4, 10),
     "manoel@email.com",
     "12345678",
@@ -39,7 +39,7 @@ public class UserConstants {
     public static UserRequestCreateDTO USER_COMMON_02_REQUEST_02 = new UserRequestCreateDTO(
     "Fernanda",
     "Barboza",
-    "222.485.444-98",
+    "571.134.160-04",
     LocalDate.of(1995, 4, 11),
     "fernanda@email.com",
     "12345678",
@@ -50,7 +50,7 @@ public class UserConstants {
     public static UserRequestCreateDTO USER_COMMON_03_REQUEST_03_CPF_ALREADY_IN_USE = new UserRequestCreateDTO(
     "Fernanda",
     "Barboza",
-    "222.432.123-12",
+    "571.134.160-04",
     LocalDate.of(1995, 4, 11),
     "fernanda@email.com",
     "12345678",
