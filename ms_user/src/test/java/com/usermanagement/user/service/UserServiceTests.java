@@ -169,12 +169,13 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("update: UserRequestWithSomeFieldsVoid > Returns_UserUpdatedResponseDTO")
-    void update_UserRequestWithSomeFieldsVoid_Returns_UserUpdatedResponseDTO() {
+    @DisplayName("update: UserRequestWithSomeEmptyFields_And_EmailNotInUse > Returns_UserUpdatedResponseDTO")
+    void update_UserRequestWithSomeEmptyFields_And_EmailNotInUse_Returns_UserUpdatedResponseDTO() {
         when(userRepository.findById(USER_COMMON_IN_DB_01.getId())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
-//        when(userRepository.findByEmail())
+        when(userRepository.findByEmail(USER_COMMON_REQUEST_WITH_SOME_FIELDS_VOID_TO_UPDATE.email().get()))
+                .thenReturn(Optional.empty());
         when(userRepository.save(USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID))
-        .thenReturn(USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID);
+                .thenReturn(USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID);
 
         UserUpdatedResponseDTO result = userService.update(USER_COMMON_IN_DB_01.getId().toString()
         , USER_COMMON_REQUEST_WITH_SOME_FIELDS_VOID_TO_UPDATE);
@@ -182,12 +183,44 @@ class UserServiceTests {
         assertNotNull(result);
         assertEquals(USER_COMMON_RESPONSE_UPDATED_WITH_SOME_FIELDS_VOID, result);
         verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).findByEmail(any());
         verify(userRepository, times(1)).save(any());
         verifyNoMoreInteractions(userRepository);
     }
 
-    //TODO test update with same email from section user
-    //TODO test update without email request
+    @Test
+    @DisplayName("update: UserRequestWithEmailFromSameSectionUser > ReturnsUserUpdatedResponseDTO")
+    void update_UserRequestWithEmailFromSameSectionUser_ReturnsUserUpdatedResponseDTO() {
+        when(userRepository.findById(USER_COMMON_IN_DB_01.getId())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
+        when(userRepository.save(USER_COMMON_UPLOADED_IN_DB_WITH_EMAIL_SAME_SECTION_USER))
+                .thenReturn(USER_COMMON_UPLOADED_IN_DB_WITH_EMAIL_SAME_SECTION_USER);
+
+        UserUpdatedResponseDTO result = userService.update(USER_COMMON_IN_DB_01.getId().toString()
+                , USER_COMMON_REQUEST_TO_UPDATE_WITH_EMAIL_SAME_SECTION_USER);
+
+        assertNotNull(result);
+        assertEquals(USER_COMMON_RESPONSE_UPDATED_WITH_EMAIL_SAME_SECTION_USER, result);
+        verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).save(any());
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    @DisplayName("update: UserRequestWithEmptyEmail > ReturnsUserUpdatedResponseDTO")
+    void update_UserRequestWithEmptyEmail_ReturnsUserUpdatedResponseDTO() {
+        when(userRepository.findById(USER_COMMON_IN_DB_01.getId())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
+        when(userRepository.save(USER_COMMON_UPLOADED_IN_DB_WITH_OTHER_LASTNAME_FROM_EMPTY_EMAIL))
+                .thenReturn(USER_COMMON_UPLOADED_IN_DB_WITH_OTHER_LASTNAME_FROM_EMPTY_EMAIL);
+
+        UserUpdatedResponseDTO result = userService.update(USER_COMMON_IN_DB_01.getId().toString()
+                , USER_COMMON_REQUEST_TO_UPDATE_WITH_EMPTY_EMAIL);
+
+        assertNotNull(result);
+        assertEquals(USER_COMMON_RESPONSE_UPDATED_WITH_EMPTY_EMAIL, result);
+        verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).save(any());
+        verifyNoMoreInteractions(userRepository);
+    }
 
     @Test
     @DisplayName("update: DisabledUserInDB > Throws_UserCannotBeChangedException")
