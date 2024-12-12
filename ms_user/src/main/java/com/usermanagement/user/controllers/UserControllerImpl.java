@@ -1,6 +1,7 @@
 package com.usermanagement.user.controllers;
 
 import com.usermanagement.user.interfaces.UserController;
+import com.usermanagement.user.model.dto.in.UserRequestAlterationPassword;
 import com.usermanagement.user.model.dto.in.UserRequestCreateDTO;
 import com.usermanagement.user.model.dto.in.UserRequestUpdateDTO;
 import com.usermanagement.user.model.dto.out.UserResponseDTO;
@@ -41,6 +42,14 @@ public class UserControllerImpl implements UserController {
         UserUpdatedResponseDTO userResponseDTO = userService.update(sectionIdUser, requestUpdateDTO);
 
         return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @PutMapping({"/{id}/password"})
+    @Override
+    public ResponseEntity<Void> alterPassword(@PathVariable("id") String sectionIDUser, @RequestBody UserRequestAlterationPassword requestAlterationPassword) {
+        userService.alterPasswordFromUserByID(sectionIDUser, requestAlterationPassword);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
