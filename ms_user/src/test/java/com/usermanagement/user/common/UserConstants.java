@@ -28,7 +28,7 @@ public class UserConstants {
     public static UserRequestCreateDTO USER_COMMON_01_REQUEST_01 = new UserRequestCreateDTO(
     "Manoel",
     "Sa",
-    "995.160.590-74",
+    "004.776.410-40",
     LocalDate.of(1990, 4, 10),
     "manoel@email.com",
     "12345678",
@@ -72,7 +72,7 @@ public class UserConstants {
     public static User USER_COMMON_01_REQUEST_01_CREATED_WITHOUT_ID = new User(
     "Manoel",
     "Sa",
-    "111.222.444-99",
+    "004.776.410-40",
     LocalDate.of(1990, 4, 10),
     "manoel@email.com",
     "12345678",
@@ -83,7 +83,7 @@ public class UserConstants {
     public static User USER_COMMON_02_REQUEST_02_CREATED_WITHOUT_ID = new User(
     "Fernanda",
     "Barboza",
-    "222.485.444-98",
+    "571.134.160-04",
     LocalDate.of(1995, 4, 11),
     "fernanda@email.com",
     "12345678",
@@ -95,7 +95,7 @@ public class UserConstants {
     UUID.randomUUID(),
     "Manoel",
     "Sa",
-    "111.222.444-99",
+    "004.776.410-40",
     LocalDate.of(1990, 4, 10),
     "manoel@email.com",
     "12345678",
@@ -145,6 +145,18 @@ public class UserConstants {
     List.of(ROLE_USER)
     );
 
+    public static User USER_COMMON_IN_DB_02 = new User(
+        UUID.randomUUID(),
+        "Raisa",
+        "Goncalves",
+        "897.282.200-06",
+        LocalDate.of(1999, 1, 22),
+        "raiG@email.com",
+        "12345678",
+        true,
+        List.of(ROLE_USER)
+    );
+
     public static User USER_DISABLE_COMMON_IN_DB_01 = new User(
     UUID.randomUUID(),
     "Solange",
@@ -163,6 +175,14 @@ public class UserConstants {
     Optional.of(LocalDate.parse("1993-09-22")),
     Optional.of("f1s@email.com"),
     Optional.of(true)
+    );
+
+    public static UserRequestUpdateDTO USER_COMMON02_REQUEST_TO_UPDATE_WITH_EMAIL_ALREADY_IN_USE = new UserRequestUpdateDTO(
+        Optional.empty(),
+        Optional.empty(),
+        Optional.empty(),
+        Optional.of("mira@email.com"),
+        Optional.of(true)
     );
 
     public static UserRequestUpdateDTO USER_COMMON_REQUEST_WITH_SOME_FIELDS_VOID_TO_UPDATE = new UserRequestUpdateDTO(

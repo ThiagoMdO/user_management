@@ -57,7 +57,7 @@ class UserServiceTests {
         assertEquals(USER_COMMON_01_RESPONSE_01_CREATED, result);
         verify(userRepository,times(1)).findByCpf(any());
         verify(userRepository, times(1)).findByEmail(any());
-        verify(roleRepository, times(2)).findByTypeRole(any());
+        verify(roleRepository, times(1)).findByTypeRole(any());
         verify(userRepository, times(1)).save(any());
         verifyNoMoreInteractions(userRepository);
         verifyNoMoreInteractions(roleRepository);
@@ -78,14 +78,14 @@ class UserServiceTests {
         assertEquals(USER_COMMON_02_RESPONSE_02_CREATED, result);
         verify(userRepository,times(1)).findByCpf(any());
         verify(userRepository, times(1)).findByEmail(any());
-        verify(roleRepository, times(8)).findByTypeRole(any());
+        verify(roleRepository, times(2)).findByTypeRole(any());
         verify(userRepository, times(1)).save(any());
         verifyNoMoreInteractions(userRepository);
         verifyNoMoreInteractions(roleRepository);
     }
 
     @Test
-    @DisplayName("create: UserRequestWithCPFAlreadyInUse > Throws_CPFAlreadyUserException")
+    @DisplayName("create: UserRequestWithCPFAlreadyInUse > Throws_CPFAlreadyInUseException")
     void create_UserRequestWithCPFAlreadyInUse_Throws_CPFAlreadyUserException() {
         when(userRepository.findByCpf(USER_COMMON_03_REQUEST_03_CPF_ALREADY_IN_USE.cpf())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
 
@@ -101,8 +101,8 @@ class UserServiceTests {
     }
 
     @Test
-    @DisplayName("create: UserRequestWithEmailAlreadyInUse > Throws_EmailAlreadyUserException")
-    void create_UserRequestWithEmailAlreadyInUse_Throws_EmailAlreadyUserException() {
+    @DisplayName("create: UserRequestWithEmailAlreadyInUse > Throws_EmailAlreadyInUseException")
+    void create_UserRequestWithEmailAlreadyInUse_Throws_EmailAlreadyInUseException() {
         when(userRepository.findByCpf(USER_COMMON_04_REQUEST_04_EMAIL_ALREADY_IN_USE.cpf())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(USER_COMMON_04_REQUEST_04_EMAIL_ALREADY_IN_USE.email())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
 
@@ -155,6 +155,7 @@ class UserServiceTests {
     @DisplayName("update: UserRequestValidFields > Returns_UserUpdatedResponseDTO")
     void update_UserRequestValidFields_Returns_UserUpdatedResponseDTO() {
         when(userRepository.findById(USER_COMMON_IN_DB_01.getId())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
+        when(userRepository.findByEmail(USER_COMMON_REQUEST_TO_UPDATE.email().get())).thenReturn(Optional.empty());
         when(userRepository.save(USER_COMMON_UPLOADED_IN_DB)).thenReturn(USER_COMMON_UPLOADED_IN_DB);
 
         UserUpdatedResponseDTO result = userService.update(USER_COMMON_IN_DB_01.getId().toString(), USER_COMMON_REQUEST_TO_UPDATE);
@@ -162,6 +163,7 @@ class UserServiceTests {
         assertNotNull(result);
         assertEquals(USER_COMMON_RESPONSE_UPDATED, result);
         verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).findByEmail(any());
         verify(userRepository, times(1)).save(any());
         verifyNoMoreInteractions(userRepository);
     }
@@ -170,6 +172,7 @@ class UserServiceTests {
     @DisplayName("update: UserRequestWithSomeFieldsVoid > Returns_UserUpdatedResponseDTO")
     void update_UserRequestWithSomeFieldsVoid_Returns_UserUpdatedResponseDTO() {
         when(userRepository.findById(USER_COMMON_IN_DB_01.getId())).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
+//        when(userRepository.findByEmail())
         when(userRepository.save(USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID))
         .thenReturn(USER_COMMON_UPLOADED_IN_DB_WITH_SOME_FIELDS_VOID);
 
@@ -182,6 +185,9 @@ class UserServiceTests {
         verify(userRepository, times(1)).save(any());
         verifyNoMoreInteractions(userRepository);
     }
+
+    //TODO test update with same email from section user
+    //TODO test update without email request
 
     @Test
     @DisplayName("update: DisabledUserInDB > Throws_UserCannotBeChangedException")
@@ -215,6 +221,19 @@ class UserServiceTests {
         verify(userRepository, never()).findById(any());
         verify(userRepository, never()).save(any());
         verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    @DisplayName("update: UserRequestWithEmailAlreadyInUse > Throws_EmailAlreadyInUseException")
+    void update_UserRequestWithEmailAlreadyInUse_Throws_EmailAlreadyInUseException() {
+        String emailAlreadyInUse = USER_COMMON_IN_DB_01.getEmail();
+        when(userRepository.findById(USER_COMMON_IN_DB_02.getId())).thenReturn(Optional.of(USER_COMMON_IN_DB_02));
+        when(userRepository.findByEmail(emailAlreadyInUse)).thenReturn(Optional.of(USER_COMMON_IN_DB_01));
+
+        assertThrows(EmailAlreadyInUseException.class,
+                () -> userService.update(USER_COMMON_IN_DB_02.getId().toString(),
+                    USER_COMMON02_REQUEST_TO_UPDATE_WITH_EMAIL_ALREADY_IN_USE));
+
     }
 
 }

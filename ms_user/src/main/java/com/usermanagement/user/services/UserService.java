@@ -14,6 +14,7 @@ import com.usermanagement.user.model.entities.Role;
 import com.usermanagement.user.model.entities.User;
 import com.usermanagement.user.repositories.RoleRepository;
 import com.usermanagement.user.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -42,16 +43,26 @@ public class UserService {
         checkCPFAvailable(requestDTO.cpf());
         checkEmailAvailable(requestDTO.email());
 
-        UserRequestCreateDTO userRequestCreateDTO = checkRole(requestDTO).isPresent() ?
-        checkRole(requestDTO).get() :
-        null;
+        UserRequestCreateDTO userRequestCreateDTO = putRoleInUserRequest(requestDTO);
 
-        var userCreated = userRepository.save(createUser(userRequestCreateDTO));
+        User user = createUser(userRequestCreateDTO);
+        var userCreated = userRepository.save(user);
 
         logger.info("ID: {}", userCreated.getId());
 
         return UserResponseDTO.createdDTO(userCreated);
     }
+
+    private UserRequestCreateDTO putRoleInUserRequest(UserRequestCreateDTO requestCreateDTO) {
+        Optional<UserRequestCreateDTO> result;
+        if (requestCreateDTO.roles() == null || requestCreateDTO.roles().isEmpty()) {
+            result = checkWithoutRole(requestCreateDTO);
+        } else {
+            result = checkWithRole(requestCreateDTO);
+        }
+        return  result.orElseThrow(IllegalArgumentException::new);
+    }
+
 
     public UserResponseDTO getByID(String id) {
         return getUserInBD(id);
@@ -79,9 +90,18 @@ public class UserService {
 
         checkUserActive(userInDB);
 
+        if (requestUpdateDTO.email().isPresent())
+            checkCurrentlyUserAndEmailAvailable(requestUpdateDTO.email().get(), userInDB.getEmail());
+
         var userToUpload = alterUserInDBByUserRequest(userInDB, requestUpdateDTO);
 
         return userRepository.save(userToUpload);
+    }
+
+    private void checkCurrentlyUserAndEmailAvailable(String emailRequest, String emailUserInDB) {
+        if (emailRequest != null && !emailRequest.isBlank()
+                && !emailUserInDB.equals(emailRequest))
+            checkEmailAvailable(emailRequest);
     }
 
     private User alterUserInDBByUserRequest(User userInDBToAlter, UserRequestUpdateDTO requestUpdateDTO) {
@@ -89,12 +109,15 @@ public class UserService {
         requestUpdateDTO.firstName().ifPresent(userInDBToAlter::setFirstName);
         requestUpdateDTO.lastName().ifPresent(userInDBToAlter::setLastName);
         requestUpdateDTO.date().ifPresent(userInDBToAlter::setDate);
-        requestUpdateDTO.email().ifPresent(userInDBToAlter::setEmail);
+
+        requestUpdateDTO.email().ifPresent((email) -> {
+            if (!requestUpdateDTO.email().get().isBlank())
+                userInDBToAlter.setEmail(email);
+        });
         requestUpdateDTO.active().ifPresent(userInDBToAlter::setActive);
 
         return userInDBToAlter;
     }
-
 
     private void checkUserActive(User userInBD) {
         if (!userInBD.isActive()) throw new UserCannotBeChangedException();
@@ -109,27 +132,16 @@ public class UserService {
         return userRepository.findById(UUID.fromString(id)).orElseThrow(UserNotFoundException::new);
     }
 
-    private Optional<UserRequestCreateDTO> checkRole(UserRequestCreateDTO requestDTO) {
-
-        return (requestDTO.roles() == null || requestDTO.roles().isEmpty()) ?
-        checkWithoutRole(requestDTO) :
-        checkWithRole(requestDTO);
-    }
-
     private Optional<UserRequestCreateDTO> checkWithRole(UserRequestCreateDTO requestDTO) {
         List<Role> roleList = new ArrayList<>();
 
         for (Role role : requestDTO.roles()) {
-            if (roleRepository.findByTypeRole(role.getTypeRole()).isPresent())
-                roleList.add(roleRepository.findByTypeRole(role.getTypeRole()).get());
+            roleRepository.findByTypeRole(role.getTypeRole())
+                    .ifPresent(roleList::add);
         }
 
-        requestDTO.roles().clear();
-        requestDTO.roles().addAll(roleList);
-
-        return Optional.of(requestDTO);
+        return Optional.of(UserRequestCreateDTO.createDTO(requestDTO, roleList));
     }
-
 
     private User createUser(UserRequestCreateDTO requestCreateDTO) {
         return User.create(requestCreateDTO);
